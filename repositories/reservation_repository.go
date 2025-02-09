@@ -1,4 +1,4 @@
-package repositories
+package repositories // Debe coincidir con el anterior
 
 import (
 	"database/sql"
@@ -6,6 +6,7 @@ import (
 	"time"
 )
 
+// UpdateReservation actualiza una reserva en la base de datos.
 func UpdateReservation(db *sql.DB, reservation map[string]interface{}) error {
 	query := `UPDATE Reservations SET car_id = ?, parking_lot_id = ?, start_date = ?, end_date = ?, total_amount = ? WHERE id = ?`
 

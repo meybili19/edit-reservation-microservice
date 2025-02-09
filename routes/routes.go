@@ -21,7 +21,8 @@ func UpdateReservationHandler(databases map[string]*sql.DB) http.HandlerFunc {
 			return
 		}
 
-		if err := services.UpdateReservationService(databases["reservations"], reservation); err != nil {
+		err := services.UpdateReservationService(databases["reservations"], reservation)
+		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}

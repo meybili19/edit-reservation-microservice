@@ -9,6 +9,17 @@ import (
 	"github.com/joho/godotenv"
 )
 
+func LoadEnv() error {
+	if os.Getenv("DB_RESERVATIONS_DSN") != "" && os.Getenv("QUERY_RESERVATION_URL") != "" {
+		return nil 
+	}
+
+	if err := godotenv.Load(); err != nil {
+		return fmt.Errorf("error loading .env file: %w", err)
+	}
+	return nil
+}
+
 func ConnectDB(dsn string) (*sql.DB, error) {
 	db, err := sql.Open("mysql", dsn)
 	if err != nil {
@@ -21,22 +32,20 @@ func ConnectDB(dsn string) (*sql.DB, error) {
 }
 
 func InitDatabases() (map[string]*sql.DB, error) {
-	if err := godotenv.Load(); err != nil {
-		return nil, fmt.Errorf("error loading .env file: %w", err)
+	if err := LoadEnv(); err != nil {
+		return nil, fmt.Errorf("error loading environment variables: %w", err)
 	}
 
 	databases := map[string]string{
 		"reservations": os.Getenv("DB_RESERVATIONS_DSN"),
 	}
 
+	connections := make(map[string]*sql.DB)
 	for name, dsn := range databases {
 		if dsn == "" {
 			return nil, fmt.Errorf("missing DSN for %s", name)
 		}
-	}
 
-	connections := make(map[string]*sql.DB)
-	for name, dsn := range databases {
 		db, err := ConnectDB(dsn)
 		if err != nil {
 			return nil, fmt.Errorf("error connecting to %s: %w", name, err)

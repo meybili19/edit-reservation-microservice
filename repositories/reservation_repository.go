@@ -1,4 +1,4 @@
-package repositories // Debe coincidir con el anterior
+package repositories 
 
 import (
 	"database/sql"
@@ -6,7 +6,6 @@ import (
 	"time"
 )
 
-// UpdateReservation actualiza una reserva en la base de datos.
 func UpdateReservation(db *sql.DB, reservation map[string]interface{}) error {
 	query := `UPDATE Reservations SET car_id = ?, parking_lot_id = ?, start_date = ?, end_date = ?, total_amount = ? WHERE id = ?`
 
@@ -20,7 +19,7 @@ func UpdateReservation(db *sql.DB, reservation map[string]interface{}) error {
 	}
 
 	duration := endDate.Sub(startDate).Hours()
-	totalAmount := duration * 10 // Ejemplo: costo por hora = 10
+	totalAmount := duration * 10 
 
 	_, err = db.Exec(query, reservation["car_id"], reservation["parking_lot_id"], startDate, endDate, totalAmount, reservation["id"])
 	return err

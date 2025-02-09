@@ -10,7 +10,6 @@ import (
 	"github.com/meybili19/edit-reservation-microservice/config"
 )
 
-// ReservationQueryResponse representa la estructura de respuesta del microservicio GraphQL.
 type ReservationQueryResponse struct {
 	Data struct {
 		GetReservationById struct {
@@ -26,16 +25,13 @@ type ReservationQueryResponse struct {
 	} `json:"data"`
 }
 
-// GetReservationByID obtiene una reserva por ID desde el microservicio GraphQL.
 func GetReservationByID(id int) (*ReservationQueryResponse, error) {
 	url := config.GetQueryReservationURL()
 
-	// Verificar que la URL no esté vacía
 	if url == "" {
 		return nil, fmt.Errorf("missing QUERY_RESERVATION_URL in .env file")
 	}
 
-	// Construcción de la consulta GraphQL
 	query := fmt.Sprintf(`{"query": "query { getReservationById(id: %d) { id userId vehicleId parkingLotId startDate endDate status totalAmount } }"}`, id)
 
 	req, err := http.NewRequest("POST", url, bytes.NewBuffer([]byte(query)))

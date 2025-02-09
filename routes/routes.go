@@ -8,7 +8,6 @@ import (
 	"github.com/meybili19/edit-reservation-microservice/services"
 )
 
-// UpdateReservationHandler maneja la actualización de una reserva.
 func UpdateReservationHandler(databases map[string]*sql.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		if r.Method != http.MethodPut {
@@ -22,7 +21,6 @@ func UpdateReservationHandler(databases map[string]*sql.DB) http.HandlerFunc {
 			return
 		}
 
-		// Intentar actualizar la reserva
 		err := services.UpdateReservationService(databases["reservations"], reservation)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)

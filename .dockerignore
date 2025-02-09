@@ -1,11 +1,7 @@
-# Ignorar binarios compilados
 edit-reservation
 
-# Ignorar dependencias de módulos
 vendor/
 
-# Ignorar archivos del sistema
 .DS_Store
 
-# Ignorar configuración de entorno local
 .env

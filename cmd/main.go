@@ -9,12 +9,11 @@ import (
 )
 
 func main() {
-	// Cargar variables de entorno
 	if err := config.LoadEnv(); err != nil {
 		log.Fatalf("Error loading environment variables: %v", err)
 	}
-
-	databases, err := config.InitDatabases() // Aquí se llama a InitDatabases correctamente
+	
+	databases, err := config.InitDatabases() 
 	if err != nil {
 		log.Fatalf("Error initializing databases: %v", err)
 	}

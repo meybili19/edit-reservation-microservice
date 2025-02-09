@@ -9,10 +9,9 @@ import (
 	"github.com/joho/godotenv"
 )
 
-// LoadEnv carga las variables de entorno desde .env si no están definidas
 func LoadEnv() error {
 	if os.Getenv("DB_RESERVATIONS_DSN") != "" && os.Getenv("QUERY_RESERVATION_URL") != "" {
-		return nil // No cargar .env si ya están definidas
+		return nil 
 	}
 
 	if err := godotenv.Load(); err != nil {
@@ -21,7 +20,6 @@ func LoadEnv() error {
 	return nil
 }
 
-// ConnectDB realiza la conexión a MySQL
 func ConnectDB(dsn string) (*sql.DB, error) {
 	db, err := sql.Open("mysql", dsn)
 	if err != nil {
@@ -33,7 +31,6 @@ func ConnectDB(dsn string) (*sql.DB, error) {
 	return db, nil
 }
 
-// InitDatabases inicializa las bases de datos y devuelve un mapa de conexiones
 func InitDatabases() (map[string]*sql.DB, error) {
 	if err := LoadEnv(); err != nil {
 		return nil, fmt.Errorf("error loading environment variables: %w", err)

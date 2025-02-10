@@ -10,8 +10,12 @@ import (
 )
 
 func LoadEnv() error {
-	if os.Getenv("DB_RESERVATIONS_DSN") != "" && os.Getenv("QUERY_RESERVATION_URL") != "" {
-		return nil 
+	if os.Getenv("DB_RESERVATIONS_HOST") != "" &&
+		os.Getenv("DB_RESERVATIONS_USER") != "" &&
+		os.Getenv("DB_RESERVATIONS_PASSWORD") != "" &&
+		os.Getenv("DB_RESERVATIONS_NAME") != "" &&
+		os.Getenv("QUERY_RESERVATION_URL") != "" {
+		return nil
 	}
 
 	if err := godotenv.Load(); err != nil {
@@ -20,7 +24,12 @@ func LoadEnv() error {
 	return nil
 }
 
-func ConnectDB(dsn string) (*sql.DB, error) {
+func GetQueryReservationURL() string {
+	return os.Getenv("QUERY_RESERVATION_URL")
+}
+
+func ConnectDB(host, user, password, dbname string) (*sql.DB, error) {
+	dsn := fmt.Sprintf("%s:%s@tcp(%s:3306)/%s", user, password, host, dbname)
 	db, err := sql.Open("mysql", dsn)
 	if err != nil {
 		return nil, fmt.Errorf("error connecting to database: %w", err)
@@ -32,25 +41,24 @@ func ConnectDB(dsn string) (*sql.DB, error) {
 }
 
 func InitDatabases() (map[string]*sql.DB, error) {
+
 	if err := LoadEnv(); err != nil {
 		return nil, fmt.Errorf("error loading environment variables: %w", err)
 	}
 
-	databases := map[string]string{
-		"reservations": os.Getenv("DB_RESERVATIONS_DSN"),
+	dbHost := os.Getenv("DB_RESERVATIONS_HOST")
+	dbUser := os.Getenv("DB_RESERVATIONS_USER")
+	dbPassword := os.Getenv("DB_RESERVATIONS_PASSWORD")
+	dbName := os.Getenv("DB_RESERVATIONS_NAME")
+
+	if dbHost == "" || dbUser == "" || dbPassword == "" || dbName == "" {
+		return nil, fmt.Errorf("missing required database environment variables")
 	}
 
-	connections := make(map[string]*sql.DB)
-	for name, dsn := range databases {
-		if dsn == "" {
-			return nil, fmt.Errorf("missing DSN for %s", name)
-		}
-
-		db, err := ConnectDB(dsn)
-		if err != nil {
-			return nil, fmt.Errorf("error connecting to %s: %w", name, err)
-		}
-		connections[name] = db
+	db, err := ConnectDB(dbHost, dbUser, dbPassword, dbName)
+	if err != nil {
+		return nil, fmt.Errorf("error connecting to reservations database: %w", err)
 	}
-	return connections, nil
+
+	return map[string]*sql.DB{"reservations": db}, nil
 }

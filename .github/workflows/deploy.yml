@@ -45,15 +45,14 @@ jobs:
             echo "📥 Descargando nueva imagen..."
             sudo docker pull ${{ secrets.DOCKER_USERNAME }}/edit_reservation_microservice_image:latest
 
-            # Ejecutar el nuevo contenedor con las variables de entorno
+            # Ejecutar el nuevo contenedor con las variables de GitHub Secrets
             echo "🚀 Ejecutando nuevo contenedor..."
-            sudo docker run -d --name edit_reservation_microservice_container \
-              --env DB_RESERVATIONS_HOST=${{ secrets.DB_RESERVATIONS_HOST }} \
-              --env DB_RESERVATIONS_USER=${{ secrets.DB_RESERVATIONS_USER }} \
-              --env DB_RESERVATIONS_PASSWORD=${{ secrets.DB_RESERVATIONS_PASSWORD }} \
-              --env DB_RESERVATIONS_NAME=${{ secrets.DB_RESERVATIONS_NAME }} \
-              --env QUERY_RESERVATION_URL=${{ secrets.QUERY_RESERVATION_URL }} \
-              -p 4001:4001 \
+            sudo docker run -d -p 4001:4001 --name edit_reservation_microservice_container \
+              -e DB_RESERVATIONS_HOST=${{ secrets.DB_RESERVATIONS_HOST }} \
+              -e DB_RESERVATIONS_USER=${{ secrets.DB_RESERVATIONS_USER }} \
+              -e DB_RESERVATIONS_PASSWORD=${{ secrets.DB_RESERVATIONS_PASSWORD }} \
+              -e DB_RESERVATIONS_NAME=${{ secrets.DB_RESERVATIONS_NAME }} \
+              -e QUERY_RESERVATION_URL=${{ secrets.QUERY_RESERVATION_URL }} \
               ${{ secrets.DOCKER_USERNAME }}/edit_reservation_microservice_image:latest
 
             echo "✅ Despliegue completado con éxito."
